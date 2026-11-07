@@ -154,6 +154,8 @@ A smaller set, for smaller screens.
 | Yellow fret | Virtual button at the bottom of the screen | -- | |
 | Blue fret | Virtual button at the bottom of the screen | -- | |
 | Orange fret | Virtual button at the bottom of the screen | -- | |
+| Star Power | Virtual button at the bottom of the screen | -- | Tap to activate |
+| Whammy | Virtual button at the bottom of the screen | -- | Hold for full whammy; release to rest |
 | Red drumpad | Virtual button at the bottom of the screen | -- | |
 | Yellow drumpad | Virtual button at the bottom of the screen | -- | |
 | Blue drumpad | Virtual button at the bottom of the screen | -- | |
@@ -164,8 +166,8 @@ A smaller set, for smaller screens.
 | Green cymbal | -- | -- | |
 | Up | Virtual button at the right of the screen | -- | Watch out for double inputs |
 | Down | Virtual button at the right of the screen | -- | Watch out for double inputs |
-| Strum up | Virtual button at the right of the screen | -- | Watch out for double inputs |
-| Strum down | Virtual button at the right of the screen | -- | Watch out for double inputs |
+| Strum up | Virtual button along the bottom | -- | Dedicated S-UP control |
+| Strum down | Virtual button along the bottom | -- | Dedicated S-DN control |
 | Start | Virtual button at the right of the screen | -- | Watch out for double inputs |
 | Select | Virtual button at the right of the screen | -- | Watch out for double inputs |
 | Whammy | -- | -- | |
