@@ -2932,12 +2932,6 @@ void App::drawTouchButtons() {
         const float k = b.r * 0.45f;
         if (b.action == Action::Up) tri(b.x - k, b.y + k * 0.5f, b.x + k, b.y + k * 0.5f, b.x, b.y - k * 0.7f, w);
         else if (b.action == Action::Down) tri(b.x - k, b.y - k * 0.5f, b.x + k, b.y - k * 0.5f, b.x, b.y + k * 0.7f, w);
-        if (b.action == Action::Start && b.y < 100) {
-            const float barW = k * 0.35f, h = k;
-            tri(b.x - k * 0.55f, b.y - h, b.x - k * 0.2f, b.y - h, b.x - k * 0.2f, b.y + h, w);
-            tri(b.x + k * 0.2f, b.y - h, b.x + k * 0.55f, b.y - h, b.x + k * 0.55f, b.y + h, w);
-            (void)barW;
-        }
     }
     if (!v.empty()) canvas_.draw(v.data(), v.size(), 0, Blend::Alpha);
     for (const Input::TouchButton& b : buttons) {
@@ -2947,7 +2941,7 @@ void App::drawTouchButtons() {
         else if (b.action == Action::Fret2) label = "Y";
         else if (b.action == Action::Fret3) label = "B";
         else if (b.action == Action::Fret4) label = "O";
-        else if (b.action == Action::Strum) label = "STRUM";
+        else if (b.action == Action::Strum) label = b.x < 610.0f ? "S-UP" : "S-DN";
         else if (b.action == Action::StarPower) label = "SP";
         else if (b.action == Action::Whammy) label = "W";
         else if (b.action == Action::Up) label = "UP";
