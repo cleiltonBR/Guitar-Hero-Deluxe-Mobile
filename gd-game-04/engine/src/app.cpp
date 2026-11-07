@@ -771,7 +771,7 @@ void App::applyEnhanced(const std::string& key) {
 // translucent disc with an arrow, or START / II (gd02's look).
 void App::drawTouchButtons() {
     const std::vector<Input::TouchButton> buttons = input_.touchButtons();
-    if (buttons.empty() || (ui_ && ui_->headless())) return;
+    if (buttons.empty()) return;
     canvas_.flush();
     std::vector<Vertex> v;
     auto tri = [&](float ax, float ay, float bx, float by, float cx, float cy, SDL_Color c) {
