@@ -778,26 +778,85 @@ void App::drawTouchButtons() {
         for (auto [x, y] : {std::pair{ax, ay}, std::pair{bx, by}, std::pair{cx, cy}})
             v.push_back({x, y, 0, 0, 0, c.r, c.g, c.b, c.a});
     };
-    for (const Input::TouchButton& b : buttons) {
-        SDL_Color fill{45, 45, 55, 170};
-        if (b.action == Action::Fret0) fill = {35, 190, 70, 185};
-        else if (b.action == Action::Fret1) fill = {210, 45, 45, 185};
-        else if (b.action == Action::Fret2) fill = {220, 190, 30, 185};
-        else if (b.action == Action::Fret3) fill = {45, 105, 225, 185};
-        else if (b.action == Action::Fret4) fill = {235, 125, 25, 185};
-        else if (b.action == Action::StarPower) fill = {25, 170, 210, 185};
-        else if (b.action == Action::Whammy) fill = {145, 80, 205, 185};
-        constexpr int kSeg = 32;
+    auto fan = [&](float x, float y, float radius, SDL_Color c) {
+        constexpr int kSeg = 40;
         for (int i = 0; i < kSeg; ++i) {
-            const float a0 = float(i) / kSeg * 6.2831853f, a1 = float(i + 1) / kSeg * 6.2831853f;
-            tri(b.x, b.y, b.x + b.r * std::cos(a0), b.y + b.r * std::sin(a0), b.x + b.r * std::cos(a1), b.y + b.r * std::sin(a1), fill);
+            const float a0 = 6.2831853f * float(i) / kSeg;
+            const float a1 = 6.2831853f * float(i + 1) / kSeg;
+            tri(x, y, x + radius * std::cos(a0), y + radius * std::sin(a0),
+                x + radius * std::cos(a1), y + radius * std::sin(a1), c);
         }
-        const SDL_Color w{255, 255, 255, 225};
-        const float k = b.r * 0.45f;
-        if (b.action == Action::Up) tri(b.x - k, b.y + k * 0.5f, b.x + k, b.y + k * 0.5f, b.x, b.y - k * 0.7f, w);
-        else if (b.action == Action::Down) tri(b.x - k, b.y - k * 0.5f, b.x + k, b.y - k * 0.5f, b.x, b.y + k * 0.7f, w);
+    };
+    auto ring = [&](float x, float y, float outer, float inner, SDL_Color c) {
+        constexpr int kSeg = 40;
+        for (int i = 0; i < kSeg; ++i) {
+            const float a0 = 6.2831853f * float(i) / kSeg;
+            const float a1 = 6.2831853f * float(i + 1) / kSeg;
+            const float ox0 = x + outer * std::cos(a0), oy0 = y + outer * std::sin(a0);
+            const float ox1 = x + outer * std::cos(a1), oy1 = y + outer * std::sin(a1);
+            const float ix0 = x + inner * std::cos(a0), iy0 = y + inner * std::sin(a0);
+            const float ix1 = x + inner * std::cos(a1), iy1 = y + inner * std::sin(a1);
+            tri(ox0, oy0, ix0, iy0, ix1, iy1, c);
+            tri(ox0, oy0, ix1, iy1, ox1, oy1, c);
+        }
+    };
+    auto arc = [&](float x, float y, float outer, float inner, float from, float to, SDL_Color c) {
+        constexpr int kSeg = 16;
+        for (int i = 0; i < kSeg; ++i) {
+            const float a0 = from + (to - from) * float(i) / kSeg;
+            const float a1 = from + (to - from) * float(i + 1) / kSeg;
+            const float ox0 = x + outer * std::cos(a0), oy0 = y + outer * std::sin(a0);
+            const float ox1 = x + outer * std::cos(a1), oy1 = y + outer * std::sin(a1);
+            const float ix0 = x + inner * std::cos(a0), iy0 = y + inner * std::sin(a0);
+            const float ix1 = x + inner * std::cos(a1), iy1 = y + inner * std::sin(a1);
+            tri(ox0, oy0, ix0, iy0, ix1, iy1, c);
+            tri(ox0, oy0, ix1, iy1, ox1, oy1, c);
+        }
+    };
+    auto rect = [&](float x0, float y0, float x1, float y1, SDL_Color c) {
+        tri(x0, y0, x1, y0, x1, y1, c);
+        tri(x0, y0, x1, y1, x0, y1, c);
+    };
+
+    for (const Input::TouchButton& b : buttons) {
+        SDL_Color face{52, 65, 82, 255};
+        if (b.action == Action::Fret0) face = {35, 190, 70, 255};
+        else if (b.action == Action::Fret1) face = {210, 45, 45, 255};
+        else if (b.action == Action::Fret2) face = {220, 190, 30, 255};
+        else if (b.action == Action::Fret3) face = {45, 105, 225, 255};
+        else if (b.action == Action::Fret4) face = {235, 125, 25, 255};
+        else if (b.action == Action::StarPower) face = {18, 150, 190, 255};
+        else if (b.action == Action::Whammy) face = {112, 78, 165, 255};
+
+        // Layered steel housing, polished chrome bevel, dark inset and enamel face.
+        fan(b.x + 1.5f, b.y + 3.0f, b.r + 3.0f, {0, 0, 0, 105});
+        fan(b.x, b.y, b.r, {62, 72, 85, 255});
+        ring(b.x, b.y, b.r, b.r * 0.88f, {225, 232, 240, 245});
+        fan(b.x, b.y, b.r * 0.875f, {15, 21, 29, 255});
+        ring(b.x, b.y, b.r * 0.875f, b.r * 0.795f, {105, 119, 134, 255});
+        fan(b.x, b.y, b.r * 0.79f, face);
+        fan(b.x, b.y, b.r * 0.66f, {255, 255, 255, 18});
+        ring(b.x, b.y, b.r * 0.785f, b.r * 0.745f, {255, 255, 255, 100});
+        arc(b.x, b.y, b.r * 0.97f, b.r * 0.91f, -2.75f, -0.42f, {255, 255, 255, 205});
+        arc(b.x, b.y, b.r * 0.97f, b.r * 0.92f, 0.48f, 2.62f, {0, 0, 0, 105});
+        arc(b.x, b.y, b.r * 0.72f, b.r * 0.68f, -2.55f, -0.75f, {255, 255, 255, 62});
+
+        const float k = b.r * 0.43f;
+        const SDL_Color symbol{250, 252, 255, 245};
+        if (b.action == Action::Up || (b.action == Action::Strum && b.x < 610.0f))
+            tri(b.x - k, b.y + k * 0.42f, b.x + k, b.y + k * 0.42f, b.x, b.y - k * 0.72f, symbol);
+        else if (b.action == Action::Down || (b.action == Action::Strum && b.x >= 610.0f))
+            tri(b.x - k, b.y - k * 0.42f, b.x + k, b.y - k * 0.42f, b.x, b.y + k * 0.72f, symbol);
+
+        if (b.action == Action::Start && b.y < 100.0f) {
+            const float w = k * 0.30f, h = k * 0.72f;
+            rect(b.x - k * 0.48f, b.y - h, b.x - k * 0.48f + w, b.y + h, symbol);
+            rect(b.x + k * 0.18f, b.y - h, b.x + k * 0.18f + w, b.y + h, symbol);
+        }
     }
     if (!v.empty()) canvas_.draw(v.data(), v.size(), 0, Blend::Alpha);
+
+    const SDL_Color ink{250, 252, 255, 245};
     for (const Input::TouchButton& b : buttons) {
         const char* label = nullptr;
         if (b.action == Action::Fret0) label = "G";
@@ -805,13 +864,11 @@ void App::drawTouchButtons() {
         else if (b.action == Action::Fret2) label = "Y";
         else if (b.action == Action::Fret3) label = "B";
         else if (b.action == Action::Fret4) label = "O";
-        else if (b.action == Action::Strum) label = b.x < 610.0f ? "S-UP" : "S-DN";
+        else if (b.action == Action::Strum) label = b.x < 610.0f ? nullptr : nullptr;
         else if (b.action == Action::StarPower) label = "SP";
         else if (b.action == Action::Whammy) label = "W";
-        else if (b.action == Action::Up) label = "UP";
-        else if (b.action == Action::Down) label = "DOWN";
-        else if (b.action == Action::Start) label = b.y < 100 ? "II" : "START";
-        if (label) canvas_.textCentered(b.x, b.y - 4, 0.85f, {255, 255, 255, 235}, label);
+        else if (b.action == Action::Start && b.y >= 100.0f) label = "START";
+        if (label) canvas_.textCentered(b.x, b.y - 4, 0.85f, ink, label);
     }
 }
 
