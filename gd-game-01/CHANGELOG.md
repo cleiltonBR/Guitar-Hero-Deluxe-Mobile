@@ -6,6 +6,9 @@ matches the tag's version.
 
 ## [Unreleased]
 
+### Added
+- Android touch gameplay: five colour-coded fret buttons, Strum, Star Power, held Whammy and Pause are available in the same virtual-guitar layout.
+
 ## [1.1.10] - 2026-11-05
 
 ### Added
