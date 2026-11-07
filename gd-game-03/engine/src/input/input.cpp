@@ -1450,6 +1450,14 @@ std::vector<Input::TouchButton> Input::touchButtons() const {
     std::vector<TouchButton> b;
     if (!touch_ || touchOpt_[0] == 2 || (touchOpt_[0] == 0 && !touchUsed_)) return b;
     if (inGame()) {
+        // Keep one virtual-guitar layout across every Android-ready game.
+        constexpr float y = 660.0f;
+        constexpr float fretR = 36.0f;
+        for (int i = 0; i < 5; ++i)
+            b.push_back({Action(int(Action::Fret0) + i), 105.0f + float(i) * 88.0f, y, fretR});
+        b.push_back({Action::Strum, 600.0f, y, 44.0f});
+        b.push_back({Action::StarPower, 760.0f, y, 40.0f});
+        b.push_back({Action::Whammy, 920.0f, y, 40.0f});
         if (touchOpt_[3] == 0) b.push_back({Action::Start, 1280 - 42, 46, kPauseR});
         if (touchOpt_[3] == 1) b.push_back({Action::Start, 42, 46, kPauseR});
         return b;
