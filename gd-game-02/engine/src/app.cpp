@@ -2932,7 +2932,7 @@ void App::drawTouchButtons() {
         else if (b.action == Action::Whammy) label = "W";
         else if (b.action == Action::Up) label = "UP";
         else if (b.action == Action::Down) label = "DOWN";
-        else if (b.action == Action::Start) label = b.y < 100 ? nullptr : "START";
+        else if (b.action == Action::Start) label = b.y < 100 ? "II" : "START";
         if (label) canvas_.textCentered(b.x, b.y - 4, 0.85f, {255, 255, 255, 235}, label);
     }
 }
