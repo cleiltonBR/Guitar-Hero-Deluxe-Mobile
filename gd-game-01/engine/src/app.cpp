@@ -2052,6 +2052,7 @@ void App::onAction(const InputEvent& e) {
 
 // The touch screen's on-screen buttons (Input::touchButtons): a dark,
 // see-through disc with a light rim and its symbol, over everything.
+// The touch screen's virtual guitar controls, drawn over the game.
 void App::drawTouchButtons() {
     for (const Input::TouchButton& b : input_.touchButtons()) {
         std::vector<Vertex> v;
@@ -2064,24 +2065,37 @@ void App::drawTouchButtons() {
                 v.push_back({b.x + r * std::cos(a1), b.y + r * std::sin(a1), 0, 0, 0, c.r, c.g, c.b, c.a});
             }
         };
-        disc(b.r, {230, 230, 235, 120});      // the rim
-        disc(b.r - 3, {10, 10, 14, 120});     // the face
-        const SDL_Color ink{240, 240, 245, 220};
+        SDL_Color fill{230, 230, 235, 120};
+        const char* label = nullptr;
+        if (b.action == Action::Fret0) fill = {35, 190, 70, 190}, label = "G";
+        else if (b.action == Action::Fret1) fill = {210, 45, 45, 190}, label = "R";
+        else if (b.action == Action::Fret2) fill = {220, 190, 30, 190}, label = "Y";
+        else if (b.action == Action::Fret3) fill = {45, 105, 225, 190}, label = "B";
+        else if (b.action == Action::Fret4) fill = {235, 125, 25, 190}, label = "O";
+        else if (b.action == Action::Strum) label = "STRUM";
+        else if (b.action == Action::StarPower) fill = {25, 170, 210, 185}, label = "SP";
+        else if (b.action == Action::Whammy) fill = {145, 80, 205, 185}, label = "W";
+        const bool pause = screen_ == Screen::Playing && b.action == Action::Start && b.y < 100;
+        if (pause) label = nullptr;
+        else if (b.action == Action::Start) label = "START";
+        disc(b.r, fill);
+        disc(b.r - 3, {10, 10, 14, 120});
+        const SDL_Color ink{240, 240, 245, 230};
         auto tri = [&](float x0, float y0, float x1, float y1, float x2, float y2) {
             v.push_back({x0, y0, 0, 0, 0, ink.r, ink.g, ink.b, ink.a});
             v.push_back({x1, y1, 0, 0, 0, ink.r, ink.g, ink.b, ink.a});
             v.push_back({x2, y2, 0, 0, 0, ink.r, ink.g, ink.b, ink.a});
         };
         const float k = b.r * 0.45f;
-        const bool song = screen_ == Screen::Playing && b.action == Action::Start && b.y < 100;
         if (b.action == Action::Up) tri(b.x, b.y - k, b.x - k, b.y + k * 0.7f, b.x + k, b.y + k * 0.7f);
         if (b.action == Action::Down) tri(b.x - k, b.y - k * 0.7f, b.x + k, b.y - k * 0.7f, b.x, b.y + k);
-        if (song) {  // pause: two bars
+        if (pause) {
             const float w = k * 0.35f, h = k;
-            for (float x : {b.x - k * 0.55f, b.x + k * 0.2f}) tri(x, b.y - h, x + w, b.y - h, x + w, b.y + h), tri(x, b.y - h, x + w, b.y + h, x, b.y + h);
+            for (float x : {b.x - k * 0.55f, b.x + k * 0.2f})
+                tri(x, b.y - h, x + w, b.y - h, x + w, b.y + h), tri(x, b.y - h, x + w, b.y + h, x, b.y + h);
         }
         renderer_.draw(v.data(), v.size(), 0, Blend::Alpha);
-        if (b.action == Action::Start && !song) renderer_.textCentered(b.x, b.y - 7, 1.0f, ink, "START");
+        if (label) renderer_.textCentered(b.x, b.y - 7, 0.85f, ink, label);
     }
 }
 
