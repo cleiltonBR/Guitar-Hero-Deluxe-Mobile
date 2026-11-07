@@ -2072,7 +2072,7 @@ void App::drawTouchButtons() {
         else if (b.action == Action::Fret2) fill = {220, 190, 30, 190}, label = "Y";
         else if (b.action == Action::Fret3) fill = {45, 105, 225, 190}, label = "B";
         else if (b.action == Action::Fret4) fill = {235, 125, 25, 190}, label = "O";
-        else if (b.action == Action::Strum) label = "STRUM";
+        else if (b.action == Action::Strum) label = b.x < 610.0f ? "S-UP" : "S-DN";
         else if (b.action == Action::StarPower) fill = {25, 170, 210, 185}, label = "SP";
         else if (b.action == Action::Whammy) fill = {145, 80, 205, 185}, label = "W";
         const bool pause = screen_ == Screen::Playing && b.action == Action::Start && b.y < 100;
